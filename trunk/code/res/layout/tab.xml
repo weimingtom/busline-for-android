@@ -14,29 +14,40 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/tab1" android:orientation="vertical"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:padding="10dip">
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/tab1" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:padding="10dip">
 
-		<TextView android:layout_width="fill_parent"
+		<TextView android:layout_width="fill_parent" android:id="@+id/tab1_tv1"
 			android:layout_height="wrap_content" android:text="@string/start"
-			android:paddingBottom="10dip" />
-
-
+			android:layout_alignParentTop="true" android:paddingBottom="5dip" />
 		<EditText android:id="@+id/tab1_et1" android:layout_width="fill_parent"
-			android:singleLine="true" android:layout_height="wrap_content" />
-		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:padding="10dip"
-			android:text="@string/end" />
-		<EditText android:id="@+id/tab1_et2" android:layout_width="fill_parent"
-			android:singleLine="true" android:layout_height="wrap_content" />
-		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="20dip" xmlns:android="http://schemas.android.com/apk/res/android" />
-		<ImageButton android:layout_width="100dip"
-			android:layout_height="50dip" android:layout_gravity="center_horizontal"
-			android:src="@android:drawable/ic_menu_search" android:id="@+id/tab1_b1" />
-	</LinearLayout>
+			android:singleLine="true" android:layout_height="wrap_content"
+			android:layout_below="@id/tab1_tv1" />
+		<TextView android:id="@+id/tab1_tv2" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:padding="5dip"
+			android:layout_below="@id/tab1_et1" android:text="@string/end" />
+		<EditText android:id="@+id/tab1_et2" android:layout_below="@id/tab1_tv2"
+			android:layout_width="fill_parent" android:singleLine="true"
+			android:layout_height="wrap_content" />
+		<LinearLayout android:id="@+id/tab1_lay1"
+			android:layout_width="fill_parent" android:layout_below="@id/tab1_et2"
+			android:layout_height="10dip" xmlns:android="http://schemas.android.com/apk/res/android" />
+		<ImageButton android:id="@+id/tab1_b1"
+			android:layout_below="@id/tab1_lay1" android:layout_width="100dip"
+			android:layout_height="50dip" android:layout_centerHorizontal="true"
+			android:src="@android:drawable/ic_menu_search" />
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			xmlns:umadsdk="http://schemas.android.com/apk/res/com.xianle.traffic_sh"
+			android:orientation="vertical" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true">
+			<net.youmi.android.AdView android:id="@+id/adView"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				umadsdk:textColor="#ffffff" umadsdk:backgroundTransparent="155"
+				umadsdk:backgroundColor="#808080" />
+		</RelativeLayout>
+	</RelativeLayout>
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/tab2" android:orientation="vertical"
