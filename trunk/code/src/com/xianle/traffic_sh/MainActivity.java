@@ -1,17 +1,13 @@
 package com.xianle.traffic_sh;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -22,15 +18,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends ListActivity {
 
-	private ArrayList<String> directoryEntries = new ArrayList<String>();
+	private ArrayList<RowModel> directoryEntries = new ArrayList<RowModel>();
 	TextView tv;
 	private DataDownloader downloader = null;
 	private File currentDirectory;
@@ -39,7 +38,7 @@ public class MainActivity extends ListActivity {
 	// because the zip lib doesn't support chinese file name 
 	// so, we have to define a hashtable to map english file name to chinese file name 
 	final  Hashtable<String, String> mFileName = new Hashtable<String, String>();
-	final  ArrayList<String> mChineseFileNameList = new ArrayList<String>(4);
+	
 	
 	
 	private void initFileNameMap() {
@@ -51,6 +50,7 @@ public class MainActivity extends ListActivity {
 		mFileName.put("fuzhou", this.getResources().getString(R.string.fuzhou));
 		mFileName.put("hefei", this.getResources().getString(R.string.hefei));
 		mFileName.put("wuhan", this.getResources().getString(R.string.wuhan));
+		mFileName.put("zhixiashi", this.getResources().getString(R.string.zhixiashi));
 	}
 	
 	/** Called when the activity is first created. */
@@ -113,7 +113,7 @@ public class MainActivity extends ListActivity {
 		CallBack cb = new CallBack();
 		cb.mParent = this;
 		this.runOnUiThread(cb);
-		 mDialog = CreateDialog();
+		mDialog = CreateDialog();
 		mDialog.show();
 	}
 	
@@ -141,7 +141,7 @@ public class MainActivity extends ListActivity {
 							Intent in = new Intent(MainActivity.this,
 									Traffic.class);
 							in.putExtra(Globals.FILENAME, aDirectory.getPath());
-							in.putExtra(Globals.Title, mChineseFileNameList.get((int)id));
+							in.putExtra(Globals.Title, directoryEntries.get((int)id).mChineseName);
 							MainActivity.this.startActivity(in);
 						} catch (Exception e) {
 							Context context = getApplicationContext();
@@ -179,8 +179,8 @@ public class MainActivity extends ListActivity {
 
 	private void fill(File[] files) {
 		this.directoryEntries.clear();
-		this.mChineseFileNameList.clear();
 		
+		int type = 0;
 		for (File file : files) {
 			if (!file.getName().endsWith(".txt") && !file.isDirectory())
 				continue;
@@ -189,44 +189,36 @@ public class MainActivity extends ListActivity {
 				name = file.getName().substring(0,
 						file.getName().lastIndexOf('.'));
 			} else {
+				type = 1;
 				name = file.getName();
 			}
-			this.directoryEntries.add(name);
+			this.directoryEntries.add(new RowModel(type, name));
 		}
 
-		Comparator<String> cmp = new ChinsesCharComp();
+		Comparator<RowModel> cmp = new ChinsesCharComp();
 		Collections.sort(directoryEntries, cmp);
-		Iterator<String> it = directoryEntries.iterator();
-		while(it.hasNext()) {
-			final String englishFileName = it.next();
-			final String chineseFileName = mFileName.get(englishFileName);
-			
-			if (chineseFileName != null) {
-				mChineseFileNameList.add(chineseFileName);
-			} else {
-				mChineseFileNameList.add(englishFileName);
-			}
-			
-		}
-		ArrayAdapter<String> directoryList = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, mChineseFileNameList);
+	
+		IconAdapter directoryList = new IconAdapter(directoryEntries);
 
 		this.setListAdapter(directoryList);
 	}
 
+	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 
 		File clickedFile = null;
-		clickedFile = new File(this.currentDirectory.getAbsolutePath()
-				+ File.separator + this.directoryEntries.get(position));
-		if(clickedFile.isDirectory()) {
+	
+		if(this.directoryEntries.get(position).mRowtype == 1) {
+			
 			Log.v(Globals.TAG, "is a directory");
+			clickedFile = new File(this.currentDirectory.getAbsolutePath()
+					+ File.separator + this.directoryEntries.get(position).mLabel);
 			this.browseTo(clickedFile, id);
 			return;
 		} 
 		clickedFile = new File(this.currentDirectory.getAbsolutePath()
-				+ File.separator + this.directoryEntries.get(position) + ".txt");
+				+ File.separator + this.directoryEntries.get(position).mLabel + ".txt");
 		
 		try {
 			if (clickedFile != null && clickedFile.isFile())
@@ -237,12 +229,37 @@ public class MainActivity extends ListActivity {
 		}
 		
 	}
+	class IconAdapter extends ArrayAdapter<RowModel> {
+		
+		IconAdapter(List<RowModel> _items) {
+		    super(MainActivity.this, R.layout.row, _items);  
+	    }
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View row = convertView;
+			
+			if (row == null) {
+				LayoutInflater inflater = getLayoutInflater();
+				row = inflater.inflate(R.layout.row, parent, false);
+			}
+			TextView tv= (TextView)row.findViewById(R.id.label);
+			tv.setText(directoryEntries.get(position).mChineseName);
+			ImageView iv = (ImageView)row.findViewById(R.id.icon);
+			if(directoryEntries.get(position).mRowtype == 0) {
+				iv.setImageResource(R.drawable.notes);
+			} else if (directoryEntries.get(position).mRowtype == 1) {
+				iv.setImageResource(R.drawable.archive);
+			}
+			return row;
+		}
+		
+	}
+	
+	class ChinsesCharComp implements Comparator<RowModel> {
 
-	class ChinsesCharComp implements Comparator<String> {
-
-		public int compare(String o1, String o2) {
-			String c1 = (String) o1;
-			String c2 = (String) o2;
+		public int compare(RowModel o1, RowModel o2) {
+			String c1 = (String) o1.mChineseName;
+			String c2 = (String) o2.mChineseName;
 			Collator myCollator = Collator.getInstance(java.util.Locale.CHINA);
 			if (myCollator.compare(c1, c2) < 0)
 				return -1;
@@ -256,5 +273,24 @@ public class MainActivity extends ListActivity {
 	public void getFileList() {
 		mDialog.dismiss();
 		browseTo(new File(Globals.DataDir),0);
+	}
+	
+	class RowModel {
+		int mRowtype; //0:file 1:directory
+		String mLabel;
+		String mChineseName;
+		
+		RowModel(int type, String label) {
+			mRowtype = type;
+			mChineseName = mLabel = label;
+			String temp = mFileName.get(label);
+			if (temp != null) {
+				mChineseName = temp;
+			}
+		}
+		public String toString() {
+			return mChineseName;
+		}
+		
 	}
 }
