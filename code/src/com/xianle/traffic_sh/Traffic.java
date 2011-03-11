@@ -3,6 +3,7 @@ package com.xianle.traffic_sh;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import net.youmi.android.AdManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -11,7 +12,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,12 +23,16 @@ import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+
+
 public class Traffic extends TabActivity {
 	/** Called when the activity is first created. */
 	TabHost.TabSpec tab4;
 	String mFile;
 	ProgressDialog mDialog;
-
+	static {
+		AdManager.init("4ef94353630d245b", "1fc8b2d8877c7eee", 30, false, "1.0");
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
