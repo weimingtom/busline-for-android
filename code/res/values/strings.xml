@@ -3,6 +3,7 @@
   
 <string name="app_name">Busline公交</string>
 <string name="beijing">北京</string> 
+<string name="zhixiashi">直辖市</string> 
 <string name="shanghai">上海</string> 
 <string name="guangzhou">广州</string>
 <string name="shenzhen">深圳</string>
