@@ -188,6 +188,7 @@ public class MainActivity extends ListActivity {
 			if (!file.isDirectory()) {
 				name = file.getName().substring(0,
 						file.getName().lastIndexOf('.'));
+				type = 0;
 			} else {
 				type = 1;
 				name = file.getName();
