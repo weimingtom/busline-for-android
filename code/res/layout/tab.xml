@@ -37,16 +37,7 @@
 			android:layout_below="@id/tab1_lay1" android:layout_width="100dip"
 			android:layout_height="50dip" android:layout_centerHorizontal="true"
 			android:src="@android:drawable/ic_menu_search" />
-		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			xmlns:umadsdk="http://schemas.android.com/apk/res/com.xianle.traffic_sh"
-			android:orientation="vertical" android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true">
-			<net.youmi.android.AdView android:id="@+id/adView"
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				umadsdk:textColor="#ffffff" umadsdk:backgroundTransparent="155"
-				umadsdk:backgroundColor="#808080" />
-		</RelativeLayout>
+		
 	</RelativeLayout>
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
